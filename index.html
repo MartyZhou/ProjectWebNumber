@@ -7,9 +7,60 @@ let submitBtn = document.getElementById("btnConvert");
 let convertedSpan = document.getElementById("convertedResult");
 
 
+let unhash = (raw, alph) => {
+    let number = 0;
+    for (var i = 0; i < raw.length; i++)
+            {
+                var pos = alph.indexOf(raw[i]);
+                number += pos * Math.pow(alph.length, raw.length - i - 1);
+            }
+
+            return number;
+}
+
+let shuffleAlph = (alph, shuffle) => {
+    let v, p, n, j;
+            v = p = n = j = 0;
+
+            for (var i = alph.length - 1; i > 0; i--, v++)
+            {
+                v %= shuffle.length;
+                p += n = shuffle.charCodeAt(v);
+                j = (n + v + p) % i;
+
+                var temp = alph[j];
+                alph = alph.substring(0, j) + alph[i] + alph.substring(j + 1);
+                alph = alph.substring(0, i) + temp + alph.substring(i + 1);
+            }
+
+            return alph;
+}
+
 submitBtn.onclick = () => {
-    //rawDataInput = document.getElementById("rawData");
-    convertedSpan.textContent = rawDataInput.value;
+    rawDataInput = document.getElementById("rawData");
+    let rawData = rawDataInput.value;
+
+    let alph = '6789abcdef';
+    let rawDataWithout5 = rawData.replace(/5/g, ' ');
+    let hashArray = rawDataWithout5.split(' ');
+    let hashIndex = 0;
+    if(hashArray.length > 0){
+        hashIndex = 1;
+    }
+    
+    let targetSection = hashArray[hashIndex];
+
+    let firstChar = targetSection[0];
+
+    let buffer = firstChar + alph;
+    let shuffle = buffer.substring(0, alph.length);
+
+    let shuffledAlph = shuffleAlph(alph, shuffle);
+
+    let subHash = targetSection.substring(1, targetSection.length);
+    let convertedValue = unhash(subHash, shuffledAlph);
+
+    convertedSpan.textContent = convertedValue;
 }
       }
     </script>
